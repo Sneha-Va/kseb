@@ -1,4 +1,5 @@
 import mysql.connector
+from datetime import date
 mydb=mysql.connector.connect(host='localhost',user='root',password='',database='ksebdb')
 mycursor = mydb.cursor()
 while(True):
@@ -58,7 +59,22 @@ while(True):
         for i in result:
             print(i)
     elif(choice==6):
-        print("generate bill")
+        print('generate bill selected')
+        dates = date.today()
+        year = dates.year
+        month = dates.month
+        sql="DELETE FROM `bill` WHERE `month`='"+str(month)+"' AND `year`= '"+str(year)+"'"
+        mycursor.execute(sql)
+        mydb.commit()
+        sql="SELECT `id` FROM `consumer`"
+        mycursor.execute(sql)
+        result=mycursor.fetchall()
+
+        for i in result:
+
+            id=i[0]
+
+            print(id)
         consumerid=input("enetr consumer id:")
         sql="SELECT `id` FROM `consumer` WHERE `consumerid` ='"+consumerid+"'"
         mycursor.execute(sql)
@@ -74,17 +90,11 @@ while(True):
         print(result)
         total_bill=int(str(result[0])) * 5
         print(total_bill)
-
         #date= datetime.today().strftime('%Y-%m-%d')
-
         sql="INSERT INTO `bill`(`consumerid`, `month`, `year`, `bill`, `billstatus`, `billdate`, `totalunit`) VALUES (%s,%s,%s,%s,%s,now(),%s)"
-
         data = (str(id),str(month),'2022',total_bill,'0',unit)
-
         mycursor.execute(sql,data)
-
         mydb.commit()
-
         print("Bill inserted successfully.")
     elif(choice==7):
         print("view bill")
