@@ -1,9 +1,10 @@
 import mysql.connector
 from datetime import date
+from tabulate import tabulate
 mydb=mysql.connector.connect(host='localhost',user='root',password='',database='ksebdb')
 mycursor = mydb.cursor()
 while(True):
-    print("select any option");
+    print("select any option")
     print("1.Add consumer")
     print("2.search consumer")
     print("3. delete consumer")
@@ -83,12 +84,17 @@ while(True):
             total_bill=int(str(result[0])) * 5
             print(total_bill)
             #date= datetime.today().strftime('%Y-%m-%d')
-            sql="INSERT INTO `bill`(`consumerid`, `month`, `year`, `bill`, `billstatus`, `billdate`, `totalunit`) VALUES (%s,%s,%s,%s,%s,now(),%s)"
+            sql="INSERT INTO `bills`(`consumerid`, `month`, `year`, `bill`, `billstatus`, `billdate`, `totalunit`,`duedate`) VALUES (%s,%s,%s,%s,%s,now(),%s,now()+interval 14 day)"
             data = (str(a),str(month),str(year),total_bill,'0',unit)
             mycursor.execute(sql,data)
             mydb.commit()
             print("Bill inserted successfully.")
     elif(choice==7):
         print("view bill")
+        print("view the bill which had generated ")
+        sql = "SELECT c.name,c.address, b.`month`, b.`year`, b.`billstatus`, b.`billdate`, b.`totalunit`, b.`bill` FROM `bills` b JOIN consumer c ON b.consumerid=c.id"
+        mycursor.execute(sql)
+        result = mycursor.fetchall()
+        print(tabulate(result,headers=['name','address','month','year', 'billstatus','billdate','totalunit','bill'],tablefmt = "psql"))
     elif(choice==8):
         break
