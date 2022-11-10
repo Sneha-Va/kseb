@@ -25,8 +25,12 @@ while(True):
         print("successfully added")
     elif(choice==2):
         print("search consumer")
-        search=input("enter consumer id,phone,name")
-        sql="SELECT `id`, `name`, `address`, `consumerid`, `phone` FROM `consumer` WHERE `consumerid`='"+search+"',OR 'name'='"+search+"',OR 'phone'='"+search+"'"
+        search=input("enter consumer id,phone,name:")
+        sql="SELECT  `name`, `address`, `consumerid`, `phone` FROM `consumer` WHERE `consumerid`='"+search+"' OR `name`='"+search+"' OR `phone`='"+search+"'"
+        mycursor.execute(sql)
+        result=mycursor.fetchall()
+        for i in result:
+            print(i)
         
     elif(choice==3):
         print("delete consumer")
@@ -54,8 +58,34 @@ while(True):
         for i in result:
             print(i)
     elif(choice==6):
-        
         print("generate bill")
+        consumerid=input("enetr consumer id:")
+        sql="SELECT `id` FROM `consumer` WHERE `consumerid` ='"+consumerid+"'"
+        mycursor.execute(sql)
+        result=mycursor.fetchall()
+        for i in result:
+            id=i[0]
+            print(id)
+        month=11
+        sql="SELECT SUM(unit)FROM `usage` WHERE `consumerid`='"+str(id)+"' AND MONTH(date)="+str(month)
+        mycursor.execute(sql)
+        result=mycursor.fetchone()
+        unit=(result[0])
+        print(result)
+        total_bill=int(str(result[0])) * 5
+        print(total_bill)
+
+        #date= datetime.today().strftime('%Y-%m-%d')
+
+        sql="INSERT INTO `bill`(`consumerid`, `month`, `year`, `bill`, `billstatus`, `billdate`, `totalunit`) VALUES (%s,%s,%s,%s,%s,now(),%s)"
+
+        data = (str(id),str(month),'2022',total_bill,'0',unit)
+
+        mycursor.execute(sql,data)
+
+        mydb.commit()
+
+        print("Bill inserted successfully.")
     elif(choice==7):
         print("view bill")
     elif(choice==8):
