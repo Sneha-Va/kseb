@@ -23,13 +23,17 @@ while(True):
         mycursor.execute(sql,data)
         mydb.commit()
         print("successfully added")
-        
-        
-    if(choice==2):
+    elif(choice==2):
         print("search consumer")
+        consumerid=input("enter consumer id")
         
     elif(choice==3):
         print("delete consumer")
+        consumerid=input("enter consumer id:")
+        sql="DELETE FROM `consumer` WHERE `consumerid`="+consumerid
+        mycursor.execute(sql)
+        mydb.commit()
+        print("successfully deleted")
     elif(choice==4):
         print("update consumer")
     elif(choice==5):
